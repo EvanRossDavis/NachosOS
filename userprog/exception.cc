@@ -56,10 +56,7 @@ ExceptionHandler(ExceptionType which)
     if ((which == SyscallException) && (type == SC_Halt)) {
 	    DEBUG('a', "Shutdown, initiated by user program.\n");
    	    interrupt->Halt();
-    } else {
-	    printf("Unexpected user mode exception %d %d\n", which, type);
-	    ASSERT(FALSE);
-    }
+    } 
 
     /* fork()
  1. save old process register
@@ -83,6 +80,9 @@ ExceptionHandler(ExceptionType which)
  10. update counter of old process and return.
 
 */
+    else if ((which == SyscallException) && (type == SC_Fork)) {
+        DEBUG('b', "Fork, initiated by user program.\n");
+    }
 
 /* Steps for Exec
 Read register r4 to get the executable path. 
@@ -127,6 +127,9 @@ free up memory and remove page table item.
 remove killed thread from scheduler.
 write 0 to r2 to show succeed.
 */
-
+else {
+	    printf("Unexpected user mode exception %d %d\n", which, type);
+	    ASSERT(FALSE);
+    }
 }
  

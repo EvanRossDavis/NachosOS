@@ -5,9 +5,7 @@
  *	code (read-only), initialized data, and unitialized data
  */
 
-#define NOFFMAGIC	0xbadfad 	/* magic number denoting Nachos 
-					 * object code file 
-					 */
+#define NOFFMAGIC	0xbadfad 	/* magic number denoting Nachos object code file */
 
 typedef struct segment {
   int virtualAddr;		/* location of segment in virt addr space */

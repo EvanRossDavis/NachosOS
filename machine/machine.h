@@ -115,12 +115,10 @@ class Machine {
 
     int ReadRegister(int num);	// read the contents of a CPU register
 
-    void WriteRegister(int num, int value);
-				// store a value into a CPU register
+    void WriteRegister(int num, int value);  // store a value into a CPU register
 
 
 // Routines internal to the machine simulation -- DO NOT call these 
-
     void OneInstruction(Instruction *instr); 	
     				// Run one instruction of a user program.
     void DelayedLoad(int nextReg, int nextVal);  	
@@ -129,15 +127,15 @@ class Machine {
     bool ReadMem(int addr, int size, int* value);
     bool WriteMem(int addr, int size, int value);
     				// Read or write 1, 2, or 4 bytes of virtual 
-				// memory (at addr).  Return FALSE if a 
-				// correct translation couldn't be found.
+					// memory (at addr).  Return FALSE if a 
+					// correct translation couldn't be found.
     
     ExceptionType Translate(int virtAddr, int* physAddr, int size,bool writing);
     				// Translate an address, and check for 
-				// alignment.  Set the use and dirty bits in 
-				// the translation entry appropriately,
+					// alignment.  Set the use and dirty bits in 
+					// the translation entry appropriately,
     				// and return an exception code if the 
-				// translation couldn't be completed.
+					// translation couldn't be completed.
 
     void RaiseException(ExceptionType which, int badVAddr);
 				// Trap to the Nachos kernel, because of a
@@ -154,7 +152,7 @@ class Machine {
 // are in terms of these data structures.
 
     char *mainMemory;		// physical memory to store user program,
-				// code and data, while executing
+							// code and data, while executing
     int registers[NumTotalRegs]; // CPU registers, for executing user programs
 
 

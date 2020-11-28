@@ -129,6 +129,9 @@ Yield:
 	syscall
 	j	$31
 	.end Yield
+	
+	.globl Kill
+	.ent	Kill
 Kill:
 	addiu $2,$0,SC_Kill
 	syscall
