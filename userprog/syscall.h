@@ -114,7 +114,7 @@ void Close(OpenFileId id);
  */
 
 /* Fork a thread to run a procedure ("func") in the *same* address space 
- * as the current thread.
+ * as the current thread and return the address space identifier
  */
 SpaceId Fork(void (*func)());
 
