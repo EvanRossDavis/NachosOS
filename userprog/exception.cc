@@ -102,7 +102,7 @@ return 1 if all steps succeed; return -1 if any step failed. e.g., the executabl
 */
     else if ((which == SyscallException) && (type == SC_Yield)) {
         DEBUG('d', "Yield, initiated by user program.\n");
-        printf("This is the Yield system call.");
+        currentThread->Yield();
     }
 
 /* Steps for Exit
