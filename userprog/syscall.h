@@ -109,8 +109,6 @@ int Read(char *buffer, int size, OpenFileId id);
 /* Close the file, we're done reading and writing to it. */
 void Close(OpenFileId id);
 
-
-
 /* User-level thread operations: Fork and Yield.  To allow multiple
  * threads to run within a user program. 
  */
@@ -118,7 +116,7 @@ void Close(OpenFileId id);
 /* Fork a thread to run a procedure ("func") in the *same* address space 
  * as the current thread.
  */
-void Fork(void (*func)());
+SpaceId Fork(void (*func)());
 
 /* Yield the CPU to another runnable thread, whether in this address space 
  * or not. 
