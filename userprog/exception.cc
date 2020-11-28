@@ -82,7 +82,7 @@ ExceptionHandler(ExceptionType which)
 */
     else if ((which == SyscallException) && (type == SC_Fork)) {
         DEBUG('b', "Fork, initiated by user program.\n");
-        printf("This is the fork system call.")
+        printf("This is the fork system call.");
     }
 
 /* Steps for Exec
@@ -94,7 +94,7 @@ return 1 if all steps succeed; return -1 if any step failed. e.g., the executabl
 */
     else if ((which == SyscallException) && (type == SC_Exec)) {
         DEBUG('c', "Exec, initiated by user program.\n");
-        printf("This is the Exec system call.")
+        printf("This is the Exec system call.");
     }
 
 /* Steps for Yield
@@ -102,7 +102,7 @@ return 1 if all steps succeed; return -1 if any step failed. e.g., the executabl
 */
     else if ((which == SyscallException) && (type == SC_Yield)) {
         DEBUG('d', "Yield, initiated by user program.\n");
-        printf("This is the Yield system call.")
+        printf("This is the Yield system call.");
     }
 
 /* Steps for Exit
@@ -116,7 +116,7 @@ current thread finish.
 */
     else if ((which == SyscallException) && (type == SC_Exit)) {
         DEBUG('e', "Exit, initiated by user program.\n");
-        printf("This is the Exit system call.")
+        printf("This is the Exit system call.");
     }
 
 /*Steps for join
@@ -130,7 +130,7 @@ register r2. return.
 */
     else if ((which == SyscallException) && (type == SC_Join)) {
         DEBUG('f', "Join, initiated by user program.\n");
-        printf("This is the Join system call.")
+        printf("This is the Join system call.");
     }
 
 /* Steps for Kill
@@ -146,7 +146,7 @@ write 0 to r2 to show succeed.
 */
     else if ((which == SyscallException) && (type == SC_Kill)) {
         DEBUG('g', "Kill, initiated by user program.\n");
-        printf("This is the Kill system call.")
+        printf("This is the Kill system call.");
     }
     else {
         printf("Unexpected user mode exception %d %d\n", which, type);
