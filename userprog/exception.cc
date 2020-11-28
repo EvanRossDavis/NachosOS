@@ -82,6 +82,7 @@ ExceptionHandler(ExceptionType which)
 */
     else if ((which == SyscallException) && (type == SC_Fork)) {
         DEBUG('b', "Fork, initiated by user program.\n");
+        printf("This is the fork system call.")
     }
 
 /* Steps for Exec
@@ -91,10 +92,18 @@ Init registers
 write 1 to register r2 indicating exec() invoked successful.
 return 1 if all steps succeed; return -1 if any step failed. e.g., the executable is unrecognizable.
 */
+    else if ((which == SyscallException) && (type == SC_Exec)) {
+        DEBUG('c', "Exec, initiated by user program.\n");
+        printf("This is the Exec system call.")
+    }
 
 /* Steps for Yield
 	currentThread yield
 */
+    else if ((which == SyscallException) && (type == SC_Yield)) {
+        DEBUG('d', "Yield, initiated by user program.\n");
+        printf("This is the Yield system call.")
+    }
 
 /* Steps for Exit
 get exit code from r4;
@@ -105,6 +114,10 @@ remove it from the pcb manager and pid manager.
 deallocate the process memory and remove from the page table;
 current thread finish.
 */
+    else if ((which == SyscallException) && (type == SC_Exit)) {
+        DEBUG('e', "Exit, initiated by user program.\n");
+        printf("This is the Exit system call.")
+    }
 
 /*Steps for join
 read process id from register r4
@@ -115,6 +128,10 @@ current process.
 If the requested process finished, write the requested process exit id to
 register r2. return.
 */
+    else if ((which == SyscallException) && (type == SC_Join)) {
+        DEBUG('f', "Join, initiated by user program.\n");
+        printf("This is the Join system call.")
+    }
 
 /* Steps for Kill
 read killed ID from r4
@@ -127,9 +144,13 @@ free up memory and remove page table item.
 remove killed thread from scheduler.
 write 0 to r2 to show succeed.
 */
-else {
-	    printf("Unexpected user mode exception %d %d\n", which, type);
-	    ASSERT(FALSE);
+    else if ((which == SyscallException) && (type == SC_Kill)) {
+        DEBUG('g', "Kill, initiated by user program.\n");
+        printf("This is the Kill system call.")
     }
+    else {
+        printf("Unexpected user mode exception %d %d\n", which, type);
+        ASSERT(FALSE);
+        }
 }
  
