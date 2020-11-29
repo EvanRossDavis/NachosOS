@@ -117,6 +117,8 @@ current thread finish.
     else if ((which == SyscallException) && (type == SC_Exit)) {
         DEBUG('e', "Exit, initiated by user program.\n");
         printf("This is the Exit system call.");
+
+        //Adjust program counter registers
     }
 
 /*Steps for join
