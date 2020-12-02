@@ -1,5 +1,5 @@
 /* syscalls.h 
- * 	Nachos system call interface.  These are Nachos kernel operations
+ * 	Nachos system call interface. These are Nachos kernel operations
  * 	that can be invoked from user programs, by trapping to the kernel
  *	via the "syscall" instruction.
  *

@@ -60,12 +60,14 @@ ExceptionHandler(ExceptionType which)
 
     /* fork()
  1. save old process register
+    currentThread->SaveUserState()
 
  2. create a new AddrSpace and copy old AddrSpace to new AddrSpace. (Improve the current AddrSpace)
+    Addrspace* space = new Addrspace(register r4)
 
  3. create a new Thread, associate new AddrSpace with new thread.
 
- 4. create a PCB (Process Control Block) and associate the new Address and new Thread with PCB. 
+ 4. create a PCB (Process Control Block - implement) and associate the new Address and new Thread with PCB. 
 
  5. complete PCB with information such as pid, ppid, etc.
 
@@ -85,70 +87,80 @@ ExceptionHandler(ExceptionType which)
         printf("This is the fork system call.");
     }
 
-/* Steps for Exec
-Read register r4 to get the executable path. 
-replace the process memory with the content of the executable.
-Init registers
-write 1 to register r2 indicating exec() invoked successful.
-return 1 if all steps succeed; return -1 if any step failed. e.g., the executable is unrecognizable.
-*/
+/* Steps for Exec*/
     else if ((which == SyscallException) && (type == SC_Exec)) {
         DEBUG('c', "Exec, initiated by user program.\n");
         printf("This is the Exec system call.");
+        
+        //Read register r4 to get the executable path.
+        int filename = machine->ReadRegister(4);
+ 
+        // replace the process memory with the content of the executable.
+        // Init registers
+        // write 1 to register r2 indicating exec() invoked successful.
+        // return 1 if all steps succeed; return -1 if any step failed. e.g., the executable is unrecognizable.
     }
 
-/* Steps for Yield
-	currentThread yield
-*/
+/* Steps for Yield*/
     else if ((which == SyscallException) && (type == SC_Yield)) {
         DEBUG('d', "Yield, initiated by user program.\n");
+
+        //	currentThread yield
         currentThread->Yield();
     }
 
-/* Steps for Exit
-get exit code from r4;
-if current process has children, set their parent pointers to null;
-if current process has a parent, remove itself from the children list of its
-parent process, and set child exit value to parent.
-remove it from the pcb manager and pid manager.
-deallocate the process memory and remove from the page table;
-current thread finish.
-*/
+/* Steps for Exit */
     else if ((which == SyscallException) && (type == SC_Exit)) {
         DEBUG('e', "Exit, initiated by user program.\n");
         printf("This is the Exit system call.");
 
+        //get exit code from r4;
+        int exitCode = machine->ReadRegister(4);
+
+        //if current process has children, set their parent pointers to null;
+        //if current process has a parent, remove itself from the children list of its
+        //parent process, and set child exit value to parent.
+        //remove it from the pcb manager and pid manager.
+        // deallocate the process memory and remove from the page table;
+        
+        // current thread finish.
+        currentThread->Finish();
+
         //Adjust program counter registers
     }
 
-/*Steps for join
-read process id from register r4
-make sure the requested process id is the child process of the current
-process.
-keep on checking if the requested process is finished. if not, yield the
-current process.
-If the requested process finished, write the requested process exit id to
-register r2. return.
-*/
+/*Steps for join*/
     else if ((which == SyscallException) && (type == SC_Join)) {
         DEBUG('f', "Join, initiated by user program.\n");
         printf("This is the Join system call.");
+        
+        //read process id from register r4
+        int pid = machine->ReadRegister(4);
+
+        // make sure the requested process id is the child process of the current
+        // process.
+        // keep on checking if the requested process is finished. if not, yield the
+        // current process.
+        // If the requested process finished, write the requested process exit id to
+        // register r2. return.
     }
 
-/* Steps for Kill
-read killed ID from r4
-make sure if the killed process exists
-if killed process is the current process, simply call exit
-if the killed process has children, set their parent pointers to null
-if the killed process has a parent, remove itself from the child list.
-remove it self from the pcb list and pid list
-free up memory and remove page table item.
-remove killed thread from scheduler.
-write 0 to r2 to show succeed.
-*/
+/* Steps for Kill*/
     else if ((which == SyscallException) && (type == SC_Kill)) {
         DEBUG('g', "Kill, initiated by user program.\n");
         printf("This is the Kill system call.");
+
+        //read killed ID from r4
+        int killedID = machine->ReadRegister(4);
+
+        // make sure if the killed process exists
+        // if killed process is the current process, simply call exit
+        // if the killed process has children, set their parent pointers to null
+        // if the killed process has a parent, remove itself from the child list.
+        // remove it self from the pcb list and pid list
+        // free up memory and remove page table item.
+        // remove killed thread from scheduler.
+        // write 0 to r2 to show succeed.        
     }
     else {
         printf("Unexpected user mode exception %d %d\n", which, type);
