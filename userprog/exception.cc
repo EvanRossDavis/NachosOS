@@ -60,19 +60,25 @@ ExceptionHandler(ExceptionType which)
 
     /* fork()
  1. save old process register
-    currentThread->SaveUserState()
+    currentThread->SaveState();
 
  2. create a new AddrSpace and copy old AddrSpace to new AddrSpace. (Improve the current AddrSpace)
-    Addrspace* space = new Addrspace(register r4)
+    Addrspace *space = new Addrspace(register r4);
+    space = currentThread->space;
 
  3. create a new Thread, associate new AddrSpace with new thread.
+    Thread *child = new Thread("Child Thread");
+    child->space = space;
 
- 4. create a PCB (Process Control Block - implement) and associate the new Address and new Thread with PCB. 
+ 4. create a PCB (Process Control Block - implement) and associate the new Address and new Thread with PCB.
+    PCB *pcb = new PCB(child);
 
  5. complete PCB with information such as pid, ppid, etc.
+    maybe in constructor???
 
  6. copy old register values to new register. Set pc reg value to value in r4. save new register values to new AddrSpace.
-
+    
+    
  7. use Thread::Fork(func, arg) to set new thread behavior: restore registers, restore memory and put machine to run.
 
  8. restore old process register

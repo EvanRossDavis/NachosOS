@@ -32,6 +32,8 @@ class AddrSpace {
     void RestoreState();		// info on a context switch 
     //simple return value
     unsigned int GetNumPages() { return numPages; }
+    
+    int ReadFile(int virtAddr, OpenFile *file, int size, int fileAddr);
 
   private:
     TranslationEntry *pageTable;	// Assume linear page table translation for now!
