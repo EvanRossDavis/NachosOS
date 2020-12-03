@@ -34,10 +34,10 @@ class AddrSpace {
     unsigned int GetNumPages() { return numPages; }
 
   private:
-    TranslationEntry *pageTable;	// Assume linear page table translation
-					// for now!
-    unsigned int numPages;		// Number of pages in the virtual 
-					// address space
+    TranslationEntry *pageTable;	// Assume linear page table translation for now!
+    unsigned int numPages;		// Number of pages in the virtual address space
+    
+    int kernelRegisters[NumTotalRegs]; //Kernel registers to save user state
 };
 
 #endif // ADDRSPACE_H

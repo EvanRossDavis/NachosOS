@@ -177,7 +177,10 @@ AddrSpace::InitRegisters()
 //----------------------------------------------------------------------
 
 void AddrSpace::SaveState() 
-{}
+{
+    for (int i = 0; i < NumTotalRegs; i++)
+	kernelRegisters[i] = machine->ReadRegister(i);
+}
 
 //----------------------------------------------------------------------
 // AddrSpace::RestoreState
