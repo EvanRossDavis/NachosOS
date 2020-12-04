@@ -20,6 +20,7 @@
 #include "memorymanager.h"
 #include "addrspace.h"
 #include "noff.h"
+#include "bitmap.h"
 #ifdef HOST_SPARC
 #include <strings.h>
 #endif
@@ -61,7 +62,8 @@ SwapHeader (NoffHeader *noffH)
 //	"executable" is the file containing the object code to load into memory
 //----------------------------------------------------------------------
 
-MemoryManager *mm = new MemoryManager(NumPhysPages);
+//MemoryManager *mm = new MemoryManager(NumPhysPages);
+BitMap *bitmap = new BitMap(NumPhysPages);
 
 AddrSpace::AddrSpace(OpenFile *executable)
 {
@@ -93,7 +95,7 @@ AddrSpace::AddrSpace(OpenFile *executable)
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++) {
 	pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
-    pageTable[i].physicalPage = i; //Call MemoryManager(getPage)
+    pageTable[i].physicalPage = bitmap->Find(); //Call MemoryManager(getPage)
 	pageTable[i].valid = TRUE;
 	pageTable[i].use = FALSE;
 	pageTable[i].dirty = FALSE;

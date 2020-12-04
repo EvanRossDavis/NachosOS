@@ -13,5 +13,4 @@ class MemoryManager {
         BitMap *virtMem; //Use the bitmap to simulate entire physical memory
                         // Indicate what memory is available by setting bits
         Lock *lock;
-
 };
