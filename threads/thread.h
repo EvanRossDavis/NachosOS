@@ -104,7 +104,6 @@ class Thread {
 
   private:
     // some of the private data for this class is listed above
-    
     int* stack; 	 		// Bottom of the stack 
 					// NULL if this is the main thread
 					// (If NULL, don't deallocate stack)
