@@ -61,7 +61,7 @@ SwapHeader (NoffHeader *noffH)
 //	"executable" is the file containing the object code to load into memory
 //----------------------------------------------------------------------
 
-//MemoryManager *mm = new MemoryManager(NumPhysPages);
+MemoryManager *mm = new MemoryManager(NumPhysPages);
 
 AddrSpace::AddrSpace(OpenFile *executable)
 {

@@ -35,6 +35,8 @@ class AddrSpace {
     
     int ReadFile(int virtAddr, OpenFile *file, int size, int fileAddr);
 
+    //Copy pages from old addrspace into new addrspace
+
   private:
     TranslationEntry *pageTable;	// Assume linear page table translation for now!
     unsigned int numPages;		// Number of pages in the virtual address space

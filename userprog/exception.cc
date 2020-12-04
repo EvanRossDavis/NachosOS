@@ -63,8 +63,10 @@ ExceptionHandler(ExceptionType which)
     currentThread->SaveState();
 
  2. create a new AddrSpace and copy old AddrSpace to new AddrSpace. (Improve the current AddrSpace)
-    Addrspace *space = new Addrspace(register r4);
-    space = currentThread->space;
+    Addrspace *newSpace = new Addrspace(); //Make another function for this
+
+    //Copy old address space into new with method
+    space = <<<<currentThread->space>>>WRONG;
 
  3. create a new Thread, associate new AddrSpace with new thread.
     Thread *child = new Thread("Child Thread");

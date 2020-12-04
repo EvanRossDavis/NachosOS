@@ -19,6 +19,8 @@ enum ProcessStatus { JUST_CREATED, RUNNING, READY, BLOCKED };
 // external function, dummy routine whose sole job is to call Process::Print
 extern void ProcessPrint(int arg);
 
+//---------NEED GLOBAL LIST OF PROCESSES SOMEWHERE------
+//-------create pcb manager------
 class PCB {
     public:
         PCB(Thread *input);
@@ -37,7 +39,7 @@ class PCB {
         int numProcesses;
         Addrspace *space;
 
-        //List for child processes
+        //List for child processes - pcbs
         List *children;
 
     // some of the private data for this class is listed above
