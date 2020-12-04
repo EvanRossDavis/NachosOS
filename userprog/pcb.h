@@ -25,6 +25,7 @@ class PCB {
     public:
         PCB(Thread *input);
         ~PCB();
+        void addToProcessList(); //adds current process to process list for the manager
         int getID();
         int getParentID();
         void setPid();
