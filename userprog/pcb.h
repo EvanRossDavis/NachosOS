@@ -33,8 +33,12 @@ class PCB {
         int processID;
         PCB *parent_process;
         int parentID;
+        int childProcessID;
         int numProcesses;
         Addrspace *space;
+
+        //List for child processes
+        List *children;
 
     // some of the private data for this class is listed above
     int* stack; 	 		// Bottom of the stack 
