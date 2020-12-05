@@ -22,6 +22,7 @@
 // of liability and disclaimer of warranty provisions.
 
 #include "copyright.h"
+#include "addrspace.h"
 #include "system.h"
 #include "syscall.h"
 
@@ -105,13 +106,44 @@ ExceptionHandler(ExceptionType which)
         DEBUG('c', "Exec, initiated by user program.\n");
         printf("This is the Exec system call.");
         
-        //Read register r4 to get the executable path.
-        int filename = machine->ReadRegister(4);
- 
+        //Read register r4 to get the executable path
         // replace the process memory with the content of the executable.
         // Init registers
         // write 1 to register r2 indicating exec() invoked successful.
         // return 1 if all steps succeed; return -1 if any step failed. e.g., the executable is unrecognizable.
+
+        //<<<------CHANGE THIS----->>>
+        char filename[100];
+        int i=0, memval;
+
+        int vaddr = machine->ReadRegister(4);
+        machine->ReadMem(vaddr, 1, &memval);
+        while ((*(char*)&memval) != '\0') {
+            filename[i]  = (char)memval;
+            ++i;
+            vaddr++;
+            machine->ReadMem(vaddr, 1, &memval);
+        }
+        filename[i]  = (char)memval;
+
+        // The above is a direct copy of StartProcess, I didn't want to change
+        // its scope so it has been included here
+        OpenFile *executable = fileSystem->Open(filename);
+        AddrSpace *space;
+
+        if (executable == NULL) {
+            printf("Unable to open file %s\n", filename);
+            return;
+        }
+        space = new AddrSpace(executable);    
+        currentThread->space = space;
+
+        delete executable;			// close file
+
+        space->InitRegisters();		// set the initial register values
+        space->RestoreState();		// load page table register
+
+        machine->Run();			// jump to the user progam
     }
 
 /* Steps for Yield*/

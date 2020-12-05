@@ -15,6 +15,7 @@
 
 #include "copyright.h"
 #include "filesys.h"
+#include "translate.h"
 
 #define UserStackSize		1024 	// increase this as necessary!
 
@@ -34,14 +35,13 @@ class AddrSpace {
     unsigned int GetNumPages() { return numPages; }
     
     int ReadFile(int virtAddr, OpenFile *file, int size, int fileAddr);
-
     //Copy pages from old addrspace into new addrspace
 
   private:
     TranslationEntry *pageTable;	// Assume linear page table translation for now!
     unsigned int numPages;		// Number of pages in the virtual address space
     
-    int kernelRegisters[NumTotalRegs]; //Kernel registers to save user state
+    //int kernelRegisters[NumTotalRegs]; //Kernel registers to save user state
 };
 
 #endif // ADDRSPACE_H
