@@ -22,6 +22,7 @@
 class AddrSpace {
   public:
     AddrSpace(OpenFile *executable);	// Create an address space,
+    AddrSpace(int numParentPages, int startPage);
 					// initializing it with the program
 					// stored in the file "executable"
     ~AddrSpace();			// De-allocate an address space
@@ -33,7 +34,9 @@ class AddrSpace {
     void RestoreState();		// info on a context switch 
     //simple return value
     unsigned int GetNumPages() { return numPages; }
-    
+    int getStartPage(); 
+  
+
     int ReadFile(int virtAddr, OpenFile *file, int size, int fileAddr);
     //Copy pages from old addrspace into new addrspace
 

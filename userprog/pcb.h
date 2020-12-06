@@ -14,21 +14,26 @@ class Thread;
 #define MachineStateSize 18 
 
 // Process state
-enum ProcessStatus { JUST_CREATED, RUNNING, READY, BLOCKED };
+//enum ProcessStatus { JUST_CREATED, RUNNING, READY, BLOCKED };
 
 // external function, dummy routine whose sole job is to call Process::Print
 extern void ProcessPrint(int arg);
 
-//---------NEED GLOBAL LIST OF PROCESSES SOMEWHERE------
-//-------create pcb manager------
 class PCB {
     public:
-        PCB(Thread *input);
+        PCB();
         ~PCB();
         void addToProcessList(); //adds current process to process list for the manager
-        int getID();
-        int getParentID();
+        int getID() {return processID;}
+        int getParentID() {return parentID;}
+        int getStatus() {return status;}
         void setPid();
+        void setStatus();
+        bool hasChildren() {if(numChildren != 0) return true;}
+        void addChild();
+        void setParentToNull();
+        void setThread(Thread* thread){processThread = thread;}
+        AddrSpace *space;
 
     private:
         int MAX_FILES;
@@ -38,30 +43,21 @@ class PCB {
         int parentID;
         int childProcessID;
         int numProcesses;
-        Addrspace *space;
+        int numChildren;
+        int status;
 
         //List for child processes - pcbs
         List *children;
 
+    
     // some of the private data for this class is listed above
     int* stack; 	 		// Bottom of the stack 
 					// NULL if this is the main process
 					// (If NULL, don't deallocate stack)
-    ProcessStatus status;		// ready, running or blocked
+    //ProcessStatus status;		// ready, running or blocked
     char* name;
 
     void StackAllocate(VoidFunctionPtr func, int arg);
     					// Allocate a stack for process.
 					// Used internally by Fork()
-
-extern "C" {
-// First frame on process execution stack; 
-//   	enable interrupts
-//	call "func"
-//	(when func returns, if ever) call ProcessFinish()
-void ProcessRoot();
-
-// Stop running oldProcess and start running newProcess
-void SWITCH(PCB *oldProcess, PCB *newProcess);
-}
 };

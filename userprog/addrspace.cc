@@ -123,6 +123,44 @@ AddrSpace::AddrSpace(OpenFile *executable)
     }
 }
 
+AddrSpace::AddrSpace(int numParentPages, int parentStartPage)
+{
+    unsigned int i, j, size;
+    numPages = parentStartPage;
+
+    size = numPages * PageSize;
+
+    ASSERT(numPages <= NumPhysPages);		// check we're not trying
+						// to run anything too big --
+						// at least until we have
+						// virtual memory
+
+    DEBUG('a', "Initializing address space, num pages %d, size %d\n", 
+					numPages, size);
+
+    // first, set up the translation 
+    pageTable = new TranslationEntry[numPages];
+    for (i = 0; i < numPages; i++) {
+	pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+    pageTable[i].physicalPage = bitmap->Find(); //Call MemoryManager(getPage)
+	pageTable[i].valid = TRUE;
+	pageTable[i].use = FALSE;
+	pageTable[i].dirty = FALSE;
+	pageTable[i].readOnly = FALSE;  // if the code segment was entirely on 
+					                // a separate page, we could set its 
+					                // pages to be read-only
+    }
+    
+    unsigned int parentPhysEnd = (parentStartPage + numPages) * PageSize; 
+    i = parentStartPage * PageSize;
+    j = numPages * PageSize;
+
+    for(; i < parentPhysEnd; ++i, ++j) {
+        machine->mainMemory[j] = machine->mainMemory[i];
+    }
+
+}
+
 //----------------------------------------------------------------------
 // AddrSpace::~AddrSpace
 // 	Dealloate an address space.  Nothing for now!
@@ -191,4 +229,9 @@ void AddrSpace::RestoreState()
 {
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
+}
+
+int AddrSpace::getStartPage() 
+{
+    return pageTable[0].physicalPage;
 }

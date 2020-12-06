@@ -25,6 +25,7 @@
 #include "addrspace.h"
 #include "system.h"
 #include "syscall.h"
+#include "pcb.h"
 
 //----------------------------------------------------------------------
 // ExceptionHandler
@@ -60,45 +61,54 @@ ExceptionHandler(ExceptionType which)
     } 
 
     /* fork()
- 1. save old process register
-    currentThread->SaveState();
 
- 2. create a new AddrSpace and copy old AddrSpace to new AddrSpace. 
-    (Improve the current AddrSpace)
-    Addrspace *newSpace = new Addrspace( <--ADD HERE--> ); //Make another function for this
-
-    //Copy old address space into new with method
-    space = <<<<currentThread->space>>>WRONG;
-
- 3. create a new Thread, associate new AddrSpace with new thread.
-    Thread *child = new Thread("Child Thread");
-    child->space = space;
-
- 4. create a PCB (Process Control Block - implement) and 
-    associate the new Address and new Thread with PCB.
-    
-    PCB *pcb = new PCB(child);
-
- 5. complete PCB with information such as pid, ppid, etc.
-    maybe in constructor???
-
- 6. copy old register values to new register. 
-    Set pc reg value to value in r4. 
-    save new register values to new AddrSpace.
-    
- 7. use Thread::Fork(func, arg) to set new thread behavior: 
- restore registers, restore memory and put machine to run.
-
- 8. restore old process register
-
- 9. write new process pid to r2 
-
- 10. update counter of old process and return.
+ 
 
 */
     else if ((which == SyscallException) && (type == SC_Fork)) {
         DEBUG('b', "Fork, initiated by user program.\n");
         printf("This is the fork system call.");
+
+        //1. save old process register
+        currentThread->SaveUserState();
+
+        //2. create a new AddrSpace and copy old AddrSpace to new AddrSpace. 
+        AddrSpace *newSpace = new AddrSpace(currentThread->space->GetNumPages(), currentThread->space->getStartPage()); 
+       //Copy old address space into new with method
+
+        // 3. create a new Thread, associate new AddrSpace with new thread.
+        Thread *child = new Thread("Child Thread");
+        child->space = newSpace;
+
+        //  4. create a PCB (Process Control Block - implement) and 
+        //     associate the new Address and new Thread with PCB.
+        PCB *pcb;
+        pcb->setThread(child);
+
+        //  6. copy old register values to new register. 
+        pcb->space->RestoreState();
+        //     Set pc reg value to value in r4. 
+        machine->WriteRegister(PCReg, machine->ReadRegister(4));
+        //     save new register values to new AddrSpace.
+        newSpace->SaveState();
+    
+        //  7. use Thread::Fork(func, arg) to set new thread behavior: 
+        child->Fork((VoidFunctionPtr)machine->ReadRegister(4), machine->ReadRegister(5));
+
+        //  restore registers, restore memory and put machine to run.
+        child->RestoreUserState();
+        machine->Run();
+
+        //  8. restore old process register
+        currentThread->RestoreUserState();
+
+        //  9. write new process pid to r2 
+        machine->WriteRegister(2, pcb->getID());
+
+        //  10. update counter of old process and return.
+        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
 
 /* Steps for Exec*/
@@ -163,10 +173,13 @@ ExceptionHandler(ExceptionType which)
         int exitCode = machine->ReadRegister(4);
 
         //if current process has children, set their parent pointers to null;
+        //if (PCB(currentThread).hasChildren()){
+
+        //}
         //if current process has a parent, remove itself from the children list of its
         //parent process, and set child exit value to parent.
         //remove it from the pcb manager and pid manager.
-        // deallocate the process memory and remove from the page table;
+        //deallocate the process memory and remove from the page table;
         
         // current thread finish.
         currentThread->Finish();
@@ -182,12 +195,14 @@ ExceptionHandler(ExceptionType which)
         //read process id from register r4
         int pid = machine->ReadRegister(4);
 
-        // make sure the requested process id is the child process of the current
-        // process.
-        // keep on checking if the requested process is finished. if not, yield the
-        // current process.
-        // If the requested process finished, write the requested process exit id to
-        // register r2. return.
+        //make sure the requested process id 
+        //is the child process of the current process.
+        
+        //keep on checking if the requested process is 
+        //finished. if not, yield the current process.
+        
+        //If the requested process finished, write the 
+        //requested process exit id to register r2. return.
     }
 
 /* Steps for Kill*/
@@ -198,14 +213,14 @@ ExceptionHandler(ExceptionType which)
         //read killed ID from r4
         int killedID = machine->ReadRegister(4);
 
-        // make sure if the killed process exists
-        // if killed process is the current process, simply call exit
-        // if the killed process has children, set their parent pointers to null
-        // if the killed process has a parent, remove itself from the child list.
-        // remove it self from the pcb list and pid list
-        // free up memory and remove page table item.
-        // remove killed thread from scheduler.
-        // write 0 to r2 to show succeed.        
+        //make sure if the killed process exists
+        //if killed process is the current process, simply call exit
+        //if the killed process has children, set their parent pointers to null
+        //if the killed process has a parent, remove itself from the child list.
+        //remove it self from the pcb list and pid list
+        //free up memory and remove page table item.
+        //remove killed thread from scheduler.
+        //write 0 to r2 to show succeed.        
     }
     else {
         printf("Unexpected user mode exception %d %d\n", which, type);
