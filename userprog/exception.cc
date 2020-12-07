@@ -60,11 +60,7 @@ ExceptionHandler(ExceptionType which)
    	    interrupt->Halt();
     } 
 
-    /* fork()
-
- 
-
-*/
+    /* fork()*/
     else if ((which == SyscallException) && (type == SC_Fork)) {
         DEBUG('b', "Fork, initiated by user program.\n");
         printf("This is the fork system call.");
@@ -154,6 +150,10 @@ ExceptionHandler(ExceptionType which)
         space->RestoreState();		// load page table register
 
         machine->Run();			// jump to the user progam
+
+        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
 
 /* Steps for Yield*/
@@ -162,6 +162,10 @@ ExceptionHandler(ExceptionType which)
 
         //	currentThread yield
         currentThread->Yield();
+
+        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
 
 /* Steps for Exit */
@@ -185,6 +189,9 @@ ExceptionHandler(ExceptionType which)
         currentThread->Finish();
 
         //Adjust program counter registers
+        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
 
 /*Steps for join*/
@@ -203,6 +210,9 @@ ExceptionHandler(ExceptionType which)
         
         //If the requested process finished, write the 
         //requested process exit id to register r2. return.
+        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
 
 /* Steps for Kill*/
@@ -220,7 +230,10 @@ ExceptionHandler(ExceptionType which)
         //remove it self from the pcb list and pid list
         //free up memory and remove page table item.
         //remove killed thread from scheduler.
-        //write 0 to r2 to show succeed.        
+        //write 0 to r2 to show succeed. 
+        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);       
     }
     else {
         printf("Unexpected user mode exception %d %d\n", which, type);
