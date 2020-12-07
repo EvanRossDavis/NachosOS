@@ -26,6 +26,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "pcb.h"
+#include "synch.h"
 
 //----------------------------------------------------------------------
 // ExceptionHandler
@@ -112,17 +113,12 @@ ExceptionHandler(ExceptionType which)
         DEBUG('c', "Exec, initiated by user program.\n");
         printf("This is the Exec system call.");
         
-        //Read register r4 to get the executable path
-        // replace the process memory with the content of the executable.
-        // Init registers
-        // write 1 to register r2 indicating exec() invoked successful.
-        // return 1 if all steps succeed; return -1 if any step failed. e.g., the executable is unrecognizable.
-
-        //<<<------CHANGE THIS----->>>
         char filename[100];
         int i=0, memval;
 
+        //Read register r4 to get the executable path
         int vaddr = machine->ReadRegister(4);
+
         machine->ReadMem(vaddr, 1, &memval);
         while ((*(char*)&memval) != '\0') {
             filename[i]  = (char)memval;
@@ -132,14 +128,13 @@ ExceptionHandler(ExceptionType which)
         }
         filename[i]  = (char)memval;
 
-        // The above is a direct copy of StartProcess, I didn't want to change
-        // its scope so it has been included here
+        // replace the process memory with the content of the executable and run exe
         OpenFile *executable = fileSystem->Open(filename);
         AddrSpace *space;
 
         if (executable == NULL) {
-            printf("Unable to open file %s\n", filename);
-            return;
+        printf("Unable to open file %s\n", filename);
+        return;
         }
         space = new AddrSpace(executable);    
         currentThread->space = space;
@@ -150,7 +145,18 @@ ExceptionHandler(ExceptionType which)
         space->RestoreState();		// load page table register
 
         machine->Run();			// jump to the user progam
+        
+        // write 1 to register r2 indicating exec() invoked successful.
+        machine->WriteRegister(2, 1);
+        
+        ASSERT(FALSE);			// machine->Run never returns;
+                        // the address space exits
+                        // by doing the syscall "exit"
 
+
+        // return 1 if all steps succeed; return -1 if any step failed. e.g., the executable is unrecognizable.
+
+        //Adjust PC counter
         machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
         machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
         machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
