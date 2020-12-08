@@ -122,7 +122,10 @@ SpaceId Fork(void (*func)());
  */
 void Yield();
 
-//----Kill----///
+// The Kill(SpaceId) kills a process with supplied SpaceId. 
+// It returns 0 if successful and -1 if not 
+// (for example SpaceId is not valid)
+int Kill();
 
 #endif /* IN_ASM */
 

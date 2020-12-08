@@ -31,8 +31,11 @@ class PCB {
         void setStatus();
         bool hasChildren() {if(numChildren != 0) return true;}
         void addChild();
-        void setParentToNull();
+        void setParentToNull() {parent_process = NULL;}
+        void setParentProcess(PCB *process) {parent_process = process;}
         void setThread(Thread* thread){processThread = thread;}
+        bool hasParent() {if (parent_process != NULL) return true;}
+        void setParentChildToNull(int processID);
         AddrSpace *space;
 
     private:

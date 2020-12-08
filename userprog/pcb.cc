@@ -22,10 +22,10 @@ PCB::PCB(Thread *input){
 
 // }
 
-PCB::setParentToNull(){
-    parentProcess = NULL;
-}
+// void PCB::setParentToNull(){
+//     parentProcess = NULL;
+// }
 
-PCB::addChild(Thread *thread){
+void PCB::addChild(Thread *thread){
     children->Append(thread);
 }

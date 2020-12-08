@@ -1,0 +1,19 @@
+Group 6
+-----------------
+Greggory Bryant
+Evan Davis
+Kristian Perez
+John Robinson
+
+We only managed to get Fork, Exec and Yield to work by following the implementation guide.
+They can be tested using the tests/ directory.
+
+In order to get it working we modified addrspace to use the Memory Manager bitmap (given from nachos) that we implemented.
+	The memory manager was used to keep track of pages using the getPage() and clearPage() functions.
+We also implmented a Program Manager in order to keep track of every process that exists. 
+	It would have an array of PCBs that were given an ID by the Process Manager which is used to find them later when needed. 
+	The idea was whenever a PCB was created it would run the ProcessManager::addProcess() function to add itself to the list.
+	Then Kill/Exit would use the ProcessManager::removeProcess() function.
+But, we had trouble using the Program Manager in conjunction with the Join, Kill and Exit functions.
+
+

@@ -4,17 +4,17 @@
 #include "addrspace.h"
 #include "pcb.h"
 
+const int SIZE = 100;
+
 class ProcessManager{
     public:
         ProcessManager();
         ~ProcessManager();
-        PCB findProcess(int ID);
+        PCB findProcess(int id);
         void addProcess(PCB process);
         int removeProcess(PCB process);
 
     private:
-        int SIZE = 100;
-        PCB[] processList;
-        int ID = 0;
-
-}
+        int id;
+        PCB processList[SIZE];
+};

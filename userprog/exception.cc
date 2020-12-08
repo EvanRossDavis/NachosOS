@@ -27,7 +27,7 @@
 #include "syscall.h"
 #include "pcb.h"
 #include "synch.h"
-
+//#include "ProcessManager.h"
 //----------------------------------------------------------------------
 // ExceptionHandler
 // 	Entry point into the Nachos kernel.  Called when a user program
@@ -181,16 +181,25 @@ ExceptionHandler(ExceptionType which)
 
         //get exit code from r4;
         int exitCode = machine->ReadRegister(4);
-
+        
+        PCB *process;
+        process->setThread(currentThread);
         //if current process has children, set their parent pointers to null;
-        //if (PCB(currentThread).hasChildren()){
-
-        //}
+        if (process->hasChildren()){
+            process->setParentProcess(NULL);
+        }
         //if current process has a parent, remove itself from the children list of its
         //parent process, and set child exit value to parent.
         //remove it from the pcb manager and pid manager.
         //deallocate the process memory and remove from the page table;
+        if (process->hasParent()){
+            //This function should find the child by id and set it to NULL but doesn't
+            //process->setParentChildToNull(process->getID());
+        }
         
+        //Memory manager would not work properly so I had to use only a bitmap
+        //Wasn't able to implement deallocation
+
         // current thread finish.
         currentThread->Finish();
 
@@ -210,12 +219,18 @@ ExceptionHandler(ExceptionType which)
 
         //make sure the requested process id 
         //is the child process of the current process.
+        PCB* process;
+        process->setThread(currentThread);
+        ASSERT(process->getID() == pid);
         
         //keep on checking if the requested process is 
         //finished. if not, yield the current process.
+        //Wasn't sure how to check if the process was finished
         
         //If the requested process finished, write the 
         //requested process exit id to register r2. return.
+        machine->WriteRegister(2, pid);
+
         machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
         machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
         machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
@@ -229,8 +244,12 @@ ExceptionHandler(ExceptionType which)
         //read killed ID from r4
         int killedID = machine->ReadRegister(4);
 
-        //make sure if the killed process exists
+        //make sure if the killed process exists, process manager doesn't work properly
+        //ProcessManager *manager;
+        //PCB foundProcess = manager->findProcess(killedID);
+
         //if killed process is the current process, simply call exit
+        
         //if the killed process has children, set their parent pointers to null
         //if the killed process has a parent, remove itself from the child list.
         //remove it self from the pcb list and pid list
